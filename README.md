@@ -1,7 +1,9 @@
 WebView App Pay Demo
 ====================
 
-> 此 Demo 用于展示如何在 Android WebView 中使用微信和支付宝 App 进行支付。
+> 此 Demo 用于展示如何在 Android/iOS WebView 中使用微信和支付宝 App 进行支付。
+
+## Android
 
 注意 `MainActivity.java` 中关于 `WebViewClient` 的设置，我们需要重载函数 [`shouldOverrideUrlLoading`](https://github.com/meican-dev/webview-app-pay-demo/blob/f9bd26882c3ffd01f0b8324dee26e2f3bb31adc2/app/src/main/java/com/miaonster/webviewwechatpay/MainActivity.java#L31-L58)，以拦截微信和支付宝唤起 App 的链接，这些链接以 `weixin://` 和 `alipays://` 开头。匹配到这些链接之后，尝试唤起对应的 App 就可以进行支付。
 
@@ -45,3 +47,21 @@ webView.setWebViewClient(new WebViewClient() {
 });
 ```
 
+## iOS
+
+注意 `ios/MeicanWebviewPayDemo/ContentView.swift` 中对于 `webView` 的重载，我们需要处理微信和支付宝的跳转链接
+
+```swift
+func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    let urlString = navigationAction.request.url?.absoluteString
+    if urlString?.range(of: "weixin://wap/pay?") != nil || urlString?.range(of: "alipays://") != nil ||  urlString?.range(of: "alipay://") != nil {
+        decisionHandler(.cancel)
+        if let mUrlStr = urlString, let openWX = URL(string: mUrlStr) {
+            UIApplication.shared.open(openWX, options: [:], completionHandler: nil)
+        }
+        return
+    }
+    decisionHandler(.allow)
+    return
+}
+```
