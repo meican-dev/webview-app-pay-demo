@@ -40,8 +40,8 @@ class WebViewHelper: NSObject, WKNavigationDelegate {
         let urlString = navigationAction.request.url?.absoluteString
         if urlString?.range(of: "weixin://wap/pay?") != nil || urlString?.range(of: "alipays://") != nil ||  urlString?.range(of: "alipay://") != nil {
             decisionHandler(.cancel)
-            if let mUrlStr = urlString, let openWX = URL(string: mUrlStr) {
-                UIApplication.shared.open(openWX, options: [:], completionHandler: nil)
+            if let mUrlStr = urlString, let openUrl = URL(string: mUrlStr) {
+                UIApplication.shared.open(openUrl, options: [:], completionHandler: nil)
             }
             return
         }
